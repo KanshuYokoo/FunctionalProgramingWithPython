@@ -1,0 +1,77 @@
+\chapter{Introduction to Mathematical Functions}
+
+\section{What is a Function?}
+
+In mathematics, a function is a fundamental concept that describes a reliable relationship between two sets of data. When we say a function "$f$" takes an input "$x$" and produces an output "$y$", we write this relationship as:
+
+\[ f(x) = y \]
+
+You can think of a mathematical function as a well-behaved machine. If you drop a specific wooden block (the input) into the top of the machine, it will *always* paint it red (the output) and drop it out the bottom. It never paints it blue one day and red the next; the result is strictly determined by the input.
+
+\subsection{Domains and Codomains}
+
+To properly use our "machine," we need to know exactly what kind of inputs it accepts and what kind of outputs it promises to produce. In formal mathematics, we define these boundaries using **Sets**.
+
+\begin{itemize}
+    \item \textbf{Domain:} The set of all possible \textit{valid inputs}. If our machine only accepts square wooden blocks, the Domain is the set of all square wooden blocks.
+    \item \textbf{Codomain:} The set of all \textit{possible outputs} the function could mathematically produce. If our machine paints blocks red, the Codomain is the set of all red objects.
+\end{itemize}
+
+When defining a function formally, mathematicians write its signature like this:
+
+\[ f : A \rightarrow B \]
+
+This is read as "$f$ is a function from set $A$ to set $B$". Set $A$ is the domain, and set $B$ is the codomain. Notice how this resembles an arrow pointing from the source to the destination.
+
+\section{From Mathematics to Code}
+
+In standard imperative programming (like writing typical Python scripts), a "function/method" is often just a sequence of instructions grouped together. It might take an input, look at a global variable, print something to the screen, change a database, and then return a value. 
+
+That is \textbf{not} a true mathematical function. A true mathematical function (often called a "pure function" in programming) has two strict rules:
+\begin{enumerate}
+    \item It must always produce the exact same output for the same input.
+    \item It must not cause any observable side effects (no printing, no modifying global variables).
+\end{enumerate}
+
+Let us look at how mathematics translates to code using Python and Haskell.
+
+\subsection{A Simple Mapping}
+
+Consider a mathematical function that squares an integer:
+\[ f : \mathbb{Z} \rightarrow \mathbb{Z} \]
+\[ f(x) = x^2 \]
+
+Here is how we represent that pure mathematical function in Python:
+
+\lstinputlisting[language=Python, caption=Python: A pure squaring function]{code/python/chapter1/functions.py}
+
+Notice the use of type hints (`int`). In functional programming, types are the equivalent of mathematical sets. The type hint `int -> int` is the exact programmatic equivalent of the mathematical signature $\mathbb{Z} \rightarrow \mathbb{Z}$.
+
+Now, let us look at Haskell, a pure functional language. In Haskell, you are \textit{forced} to write pure mathematical functions. 
+
+\lstinputlisting[language=Haskell, caption=Haskell: A pure squaring function]{code/haskel/chapter1/functions.hs}
+
+In Haskell, the signature `square :: Int -> Int` is front and center. It explicitly declares that `square` is a mapping from the set of Integers to the set of Integers.
+
+\section{An Early Glimpse at Category Theory}
+
+You have now seen three concepts:
+\begin{itemize}
+    \item Sets of data (like Integers or Strings).
+    \item Functions that map data from one set to another.
+    \item The idea that these mappings behave like arrows ($A \rightarrow B$).
+\end{itemize}
+
+Without realizing it, you have just stepped into \textbf{Category Theory}. 
+
+Category Theory is an abstract branch of mathematics that studies structures and systems of structures. Instead of looking at the specific data \textit{inside} a set (like the number $4$ inside the set of integers), Category Theory zooms out and looks at how entire sets relate to each other through functions.
+
+A **Category** is simply a collection of two things:
+\begin{enumerate}
+    \item \textbf{Objects:} These are the "things" in your category. In programming, you can think of Objects as your \textbf{Types} (like `int`, `str`, or `List`). In mathematics, these are often Sets.
+    \item \textbf{Morphisms (Arrows):} These are the connections between the Objects. In programming, these are your \textbf{Functions}. If you have a function that takes an `int` and returns a `str`, that function is a morphism pointing from the `int` object to the `str` object.
+\end{enumerate}
+
+When you write a pure function in Python or Haskell, you are defining a morphism between two objects in the "Category of Types" (often called \textbf{Hask} in the Haskell world). 
+
+As we progress through this book, we will rely heavily on this simple visual metaphor. By treating types as dots (objects) and functions as arrows (morphisms) connecting those dots, complex programming concepts will become elegantly simple.
