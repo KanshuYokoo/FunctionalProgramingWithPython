@@ -45,3 +45,13 @@ Alternatively, if you use Chocolatey (`choco`):
 ```powershell
 choco install texlive
 ```
+
+## How to Compile LaTeX
+
+To compile the LaTeX document, use the following command:
+
+```bash
+lualatex main.tex
+```
+
+This will generate a PDF file named `main.pdf`.
