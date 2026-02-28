@@ -1,0 +1,74 @@
+\chapter{The Calculus of Functions}
+
+\section{Introduction to Lambda Calculus}
+
+In the 1930s, mathematician Alonzo Church invented a formal system called \textbf{Lambda Calculus} ($\lambda$-calculus) to investigate the foundations of mathematics. While Alan Turing was inventing the Turing Machine (the theoretical basis for imperative programming languages like C, Java, and Python's procedural aspects), Church was inventing Lambda Calculus, which became the theoretical foundation for all functional programming languages.
+
+Lambda Calculus is astonishingly simple. It consists of only three things:
+\begin{enumerate}
+    \item \textbf{Variables:} Symbols like $x, y, z$.
+    \item \textbf{Abstractions (Function Definitions):} Creating a function, denoted by the Greek letter Lambda ($\lambda$).
+    \item \textbf{Applications (Function Calls):} Applying a function to an argument.
+\end{enumerate}
+
+Let us look at a simple mathematical function: $f(x) = x + 1$.
+In Lambda Calculus, we drop the name ``$f$'' entirely and define just the mapping. We write it using a lambda abstraction:
+\[ \lambda x . x + 1 \]
+
+This reads as: ``A function that takes a variable $x$ (the part before the dot) and returns $x + 1$ (the body after the dot).''
+
+\subsection{Anonymous Functions in Code}
+
+Because these functions don't have a name like ``$f$'', they are called \textbf{Anonymous Functions}. Modern programming languages have adopted this concept directly.
+
+Here is how you write anonymous functions in Python:
+
+\lstinputlisting[language=Python, caption=Python: Lambda (Anonymous) Functions]{../code/python/chapter2/lambdas.py}
+
+And here is the exact same concept in Haskell, which uses the backslash \texttt{$\backslash$} as a typographical substitute for the Greek letter $\lambda$:
+
+\lstinputlisting[language=Haskell, caption=Haskell: Anonymous Functions]{../code/haskel/chapter2/lambdas.hs}
+
+\section{Bound vs. Free Variables}
+
+To understand how Lambda Calculus evaluates, we must distinguish between bound and free variables.
+
+Look at this expression:
+\[ \lambda x . x + y \]
+
+\begin{itemize}
+    \item The variable $x$ is \textbf{bound}. It is declared in the ``head'' ($\lambda x$) of the function. Whoever calls the function will provide the value for $x$.
+    \item The variable $y$ is \textbf{free}. It is not defined in the head. For this function to make sense, $y$ must be defined somewhere else in the surrounding environment.
+\end{itemize}
+
+A lambda expression where every variable is bound is called a \textbf{Combinator}. The simplest combinator is the Identity Function ($\lambda x . x$), which just returns whatever is passed to it.
+
+\section{The Rules of Computation}
+
+Turing Machines compute by moving tape and changing states. Lambda Calculus computes using just two simple text-replacement rules: Alpha-conversion and Beta-reduction.
+
+\subsection{Alpha-Conversion ($\alpha$-conversion)}
+
+Alpha-conversion is the rule of \textbf{renaming}. It states that the specific name of a bound variable does not matter.
+
+\[ \lambda x . x \quad \text{is exactly the same as} \quad \lambda y . y \]
+
+In Python, \verb|lambda x: x| and \verb|lambda y: y| are identical functions. Changing the variable name does not change what the function \textit{does}. This allows us to avoid naming collisions when applying functions to other functions.
+
+\subsection{Beta-Reduction ($\beta$-reduction)}
+
+Beta-reduction is the rule of \textbf{application}. It is the actual process of ``running'' or ``calling'' the function. It works by substituting the input argument into the body of the function wherever the bound variable appears.
+
+Consider applying our $+1$ function to the number $5$:
+\[ (\lambda x . x + 1)\ 5 \]
+
+To perform a Beta-reduction, we take the input ($5$), replace every instance of the bound variable ($x$) in the body with it, and drop the lambda head:
+\[ (\lambda x . x + 1)\ 5 \xrightarrow{\beta} 5 + 1 \rightarrow 6 \]
+
+If you string multiple lambda applications together, Beta-reduction is how you ``execute'' the program, step-by-step, until you arrive at the final answer.
+
+\section{Why This Matters}
+
+In functional programming, whether you are using Python's \verb|map()| or building complex Haskell architectures, your program is fundamentally a massive expression of nested functions. The compiler or interpreter executes your program by performing Beta-reductions until no more functions can be applied.
+
+Understanding Lambda Calculus gives you the mental model to see through the syntax of a language and understand the pure dataflow underneath.
