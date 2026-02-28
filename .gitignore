@@ -1,0 +1,30 @@
+# Core LaTeX/BibTeX/Build Files
+*.aux 
+*.bbl 
+*.bcf 
+*.blg 
+*.fls 
+*.log 
+*.out 
+*.run.xml 
+*.toc
+*.dvi 
+*.xdv 
+*.fdb_latexmk 
+*.synctex.gz
+# Optional: uncomment to ignore generated PDFs
+*.pdf 
+
+# Additional Package & Editor Files
+*.lof
+*.lot 
+*.toc 
+*.nav 
+*.snm 
+*.vrb 
+*.run.xml
+*.swp 
+.DS_Store 
+
+# Build Directories
+

@@ -43,13 +43,13 @@ Consider a mathematical function that squares an integer:
 
 Here is how we represent that pure mathematical function in Python:
 
-\lstinputlisting[language=Python, caption=Python: A pure squaring function]{code/python/chapter1/functions.py}
+\lstinputlisting[language=Python, caption=Python: A pure squaring function]{../code/python/chapter1/functions.py}
 
 Notice the use of type hints (`int`). In functional programming, types are the equivalent of mathematical sets. The type hint `int -> int` is the exact programmatic equivalent of the mathematical signature $\mathbb{Z} \rightarrow \mathbb{Z}$.
 
 Now, let us look at Haskell, a pure functional language. In Haskell, you are \textit{forced} to write pure mathematical functions. 
 
-\lstinputlisting[language=Haskell, caption=Haskell: A pure squaring function]{code/haskel/chapter1/functions.hs}
+\lstinputlisting[language=Haskell, caption=Haskell: A pure squaring function]{../code/haskel/chapter1/functions.hs}
 
 In Haskell, the signature `square :: Int -> Int` is front and center. It explicitly declares that `square` is a mapping from the set of Integers to the set of Integers.
 
