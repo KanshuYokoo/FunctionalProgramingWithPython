@@ -71,3 +71,42 @@ As an AI assistant working on this project, adhere strictly to the following org
 - **Reference Code:** Code snippets must use strict typing (e.g., Python Type Hints, Haskell Type Signatures). No `Any` typing.
 
 By strictly segregating the markup text, the Python code, the Haskell code, and the images, we ensure the project remains cleanly decoupled and easily compilable.
+
+## Developer Pitfalls (Known Failures to Avoid)
+
+### 1. No Unicode / Non-ASCII Characters in Code Files
+
+**Symptom:** `pdflatex` throws `! LaTeX Error: Invalid UTF-8 byte sequence` when processing a file included via `\lstinputlisting`.
+
+**Cause:** The `listings` package reads code files as raw byte streams. It cannot render Unicode characters (such as `λ`, `→`, `∀`, etc.) when using `pdflatex`.
+
+**Fix:**
+- All files under `Contents/code/` must contain **ASCII-only** characters.
+- To display a special mathematical symbol in the text, write it in the `.tex` file using LaTeX math mode (e.g., `$\lambda$`, `$\rightarrow$`), **not** inside the code file itself.
+
+```
+# WRONG (inside a .py or .hs code file):
+# -- looks like a lambda 'λ'
+
+# CORRECT (ASCII only inside code files):
+# -- looks like a lambda 'lambda'
+# And in the .tex narrative text: $\lambda$
+```
+
+---
+
+### 2. No Markdown Syntax Inside `.tex` Files
+
+**Symptom:** `pdflatex` fails or renders incorrectly when encountering Markdown formatting inside a `.tex` file.
+
+**Cause:** LaTeX and Markdown are entirely different markup languages. Characters like `**`, `` ` ``, `*`, and `"` have different or no meaning in LaTeX.
+
+**Fix:** Always use proper LaTeX equivalents inside `.tex` files:
+
+| Markdown (WRONG in `.tex`) | LaTeX (CORRECT) |
+|---|---|
+| `**bold text**` | `\textbf{bold text}` |
+| `` `inline code` `` | `\texttt{inline code}` or `\verb\|inline code\|` |
+| `*italic text*` | `\textit{italic text}` |
+| `"double quotes"` | ` ``double quotes'' ` |
+
