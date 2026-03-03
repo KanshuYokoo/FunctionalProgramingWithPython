@@ -1,5 +1,11 @@
 # FunctionalProgramingWithPython
 
+## Preface
+
+This book is for anyone eager to study functional programming, especially those who wish to explore Category Theory through that lens. I have written this for two people: my younger self as a high school student, and the person I am today. Of course, it is also for anyone who shares those same interests. When I was younger, the opportunity to learn Category Theory alongside functional programming simply didn’t exist.
+
+This textbook bridges the gap between formal mathematics and practical software engineering using Python and Haskell. It is designed specifically for students with a high school mathematical background.
+
 ## Directory Structure
 
 ```text
