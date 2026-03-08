@@ -1,0 +1,99 @@
+\chapter{The Functional Paradigm}
+
+\section{Two Ways to Think About Programs}
+
+There are two fundamentally different philosophies for writing programs. Understanding the difference between them is the cornerstone of functional programming.
+
+\subsection{The Imperative Approach: How to Do It}
+
+Imperative programming is the most common style, used in languages like C, Java, and standard Python. You give the computer a sequence of commands---a step-by-step recipe that describes \textit{how} to achieve a result by changing the state of the program.
+
+Consider a program that calculates the sum of a list of numbers using the imperative style:
+
+\lstinputlisting[language=Python, caption=Python: Imperative style summation]{../code/python/chapter3/paradigm.py}
+
+In this style, we use a variable \texttt{total} that we \textit{mutate} (change) at each step. The program is a sequence of state changes: first \texttt{total} is 0, then 1, then 3, then 6, and so on.
+
+\subsection{The Declarative Approach: What to Compute}
+
+Declarative programming is the style that emerges from Lambda Calculus. Instead of describing \textit{how} to compute a result, you describe \textit{what} the result \textbf{is}---as a mathematical expression. You do not give step-by-step instructions; you express relationships between values.
+
+Haskell is a declarative language at its core. Look at its equivalent:
+
+\lstinputlisting[language=Haskell, caption=Haskell: Declarative style summation]{../code/haskel/chapter3/paradigm.hs}
+
+Notice that in Haskell's \texttt{mySum}, there is no loop, no counter variable, and no mutation. The function \textit{declares} what a sum is---a recursive relationship---and the runtime figures out the rest.
+
+The key principle is: \textbf{in functional programming, you compose expressions, not statements}.
+
+\section{Pure Functions}
+
+At the heart of the functional paradigm is the concept of a \textbf{Pure Function}---a function that behaves exactly like a mathematical function, following two rules:
+
+\begin{enumerate}
+    \item \textbf{Deterministic:} Given the same input, it always returns the exact same output. No randomness, no time-dependence, no reading from a database.
+    \item \textbf{No Side Effects:} It does not change anything observable outside its own scope. It does not print to the screen, modify a global variable, write to a file, or send a network request.
+\end{enumerate}
+
+In Category Theory terms, a pure function is a genuine \textit{morphism}---a reliable arrow from one type (object) to another. If the function could secretly modify the world around it, it would no longer be a true arrow between types.
+
+\subsection{Pure vs. Impure in Python}
+
+Python allows both pure and impure functions. It is the programmer's discipline that enforces purity. Here is a clear contrast:
+
+A \textbf{pure function}---its only output is its return value, entirely determined by its input:
+\begin{verbatim}
+def add(x: int, y: int) -> int:
+    return x + y
+\end{verbatim}
+
+An \textbf{impure function}---it reads from and modifies the external world:
+\begin{verbatim}
+count: int = 0
+
+def increment_and_add(x: int) -> int:
+    global count
+    count += 1        # side effect: modifies external state
+    print(count)      # side effect: performs I/O
+    return x + count  # result depends on hidden external state
+\end{verbatim}
+
+The impure version is unpredictable. Its output for \texttt{increment\_and\_add(5)} changes every time it is called---even with the same argument. This makes it extremely difficult to reason about, test, and compose with other functions.
+
+\section{Side Effects}
+
+A \textbf{side effect} is any observable interaction a function has with the outside world beyond returning a value. Common side effects include:
+
+\begin{itemize}
+    \item Modifying a global or mutable variable.
+    \item Writing to the console (\texttt{print()}).
+    \item Reading from or writing to a file or database.
+    \item Making a network request.
+    \item Raising or catching an exception in a way that alters control flow.
+\end{itemize}
+
+Side effects are not inherently ``evil''---a program that never prints anything, writes to a file, or talks to a database is not very useful. The functional approach is not to \textit{eliminate} side effects, but to \textbf{isolate and control} them, keeping the majority of the program logic in pure, predictable functions. The impure parts (I/O, mutations) are pushed to the outer edges of the system.
+
+Haskell enforces this separation at the type level using the \texttt{IO} type. Any function that performs a side effect \textit{must} declare this in its type signature (e.g., \texttt{printSquare :: Int -> IO ()}), making impurity explicit and impossible to accidentally introduce into pure code.
+
+\section{Referential Transparency}
+
+\textbf{Referential Transparency} is a formal property that arises directly from using pure functions. An expression is referentially transparent if it can be replaced with its computed value without changing the behaviour of the program.
+
+Consider this expression in Python:
+\begin{verbatim}
+result = add(2, 3) + add(2, 3)
+\end{verbatim}
+
+Because \texttt{add} is a pure function that always returns 5 for inputs \texttt{(2, 3)}, we can freely substitute:
+\begin{verbatim}
+result = 5 + 5
+\end{verbatim}
+
+The program behaves identically. \texttt{add(2, 3)} is referentially transparent because it is pure.
+
+Now consider \texttt{increment\_and\_add(5) + increment\_and\_add(5)}. You \textit{cannot} substitute \texttt{increment\_and\_add(5)} with its first computed value, because the second call will produce a different result (it increments \texttt{count} again). This violates referential transparency.
+
+Referential transparency has a profound practical consequence: it enables the compiler (and the programmer) to reason about code through \textbf{equational reasoning}---replacing expressions with equal expressions, just like in algebra. This is the mathematical bedrock of the functional paradigm, and it is why functional code is generally easier to test, refactor, and compose.
+
+In category theoretic terms, referential transparency is what lets us treat functions as genuine morphisms---arrows that reliably map objects to objects, without hidden context.

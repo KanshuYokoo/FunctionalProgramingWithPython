@@ -1,0 +1,65 @@
+\chapter{Functions as First-Class Citizens}
+
+\section{What Does ``First-Class'' Mean?}
+
+In many traditional programming languages, functions and data are kept strictly separate. You can store an integer in a variable, pass a string to a function, or return a boolean. But you cannot do those things \textit{with a function itself}. The function is a static piece of architecture, while the data flows through it.
+
+In functional programming, \textbf{functions are data}. 
+
+When we say a language treats functions as ``First-Class Citizens,'' we mean that a function has the exact same rights and privileges as any other piece of data (like an integer or a string). Specifically, you can:
+\begin{enumerate}
+    \item Assign a function to a variable.
+    \item Pass a function as an argument to another function.
+    \item Return a function as the result of another function.
+\end{enumerate}
+
+\section{Passing Functions as Data}
+
+Let us look at how this works in practice. Suppose we want to apply a transformation to a number. Instead of hardcoding the transformation, we can pass the transformation \textit{as a function}.
+
+\lstinputlisting[language=Python, caption=Python: Passing a function as an argument]{../code/python/chapter4/firstclass.py}
+
+In the \texttt{apply\_twice} function, the parameter \texttt{f} is not a number or a string; it is a function. We can swap out \texttt{f} for any function we want, making \texttt{apply\_twice} incredibly flexible.
+
+\section{Higher-Order Functions}
+
+A function that does at least one of the following is called a \textbf{Higher-Order Function} (HOF):
+\begin{itemize}
+    \item Takes one or more functions as arguments.
+    \item Returns a function as its result.
+\end{itemize}
+
+Calculus students might recognize this concept. The derivative operator $\frac{d}{dx}$ is a higher-order function: it takes a function as an input (like $f(x) = x^2$) and returns a new function as an output ($f'(x) = 2x$).
+
+\subsection{The Holy Trinity: Map, Filter, and Reduce}
+
+Because functional programmers use Higher-Order Functions constantly, three specific HOFs have become the universal standard for processing lists of data: \texttt{map}, \texttt{filter}, and \texttt{reduce} (often called \texttt{fold}).
+
+\subsubsection{Map}
+\texttt{map} takes a function and a list, and applies that function to every single item in the list, returning a new list.
+
+If you have a list of integers \texttt{[1, 2, 3]} and you \texttt{map} a square function over it, you get \texttt{[1, 4, 9]}. You never write a \texttt{for}-loop; you just declare the transformation.
+
+\lstinputlisting[language=Haskell, caption=Haskell: Map and Filter]{../code/haskel/chapter4/firstclass.hs}
+
+\subsubsection{Filter}
+\texttt{filter} takes a \textit{predicate} function (a function that returns True or False) and a list. It returns a new list containing only the items for which the predicate returned True. 
+
+If you \texttt{filter} the list \texttt{[1, 2, 3, 4]} with an \texttt{is\_even} function, you get \texttt{[2, 4]}.
+
+\subsubsection{Reduce (Fold)}
+\texttt{reduce} (or \texttt{fold} in Haskell) takes a function, an initial starting value, and a list. It uses the function to combine the elements one by one until the list is reduced to a single value.
+
+For example, reducing the list \texttt{[1, 2, 3]} with an addition function and a starting value of $0$ will compute $(((0 + 1) + 2) + 3) = 6$.
+
+\section{A Gentle Introduction to Functors}
+
+In Category Theory, we established that a Category consists of Objects (types) and Morphisms (functions). 
+
+What happens if we want to map relationships \textit{between entire categories}? 
+
+In Category Theory, a mapping between categories is called a \textbf{Functor}. In programming, you can think of a Functor as any container or context (like a List) that can be mapped over. 
+
+When you use the \texttt{map} function on a List of Integers to turn it into a List of Strings, you are using the List Functor. The Functor reaches inside the container, applies your function to the data, and wraps the results back up in a new container, all while preserving the structure of the container itself. 
+
+Functions as first-class citizens are what make concepts like Functors possible in code. By passing a function into \texttt{map}, you are lifting that simple data transformation into a higher mathematical dimension.
