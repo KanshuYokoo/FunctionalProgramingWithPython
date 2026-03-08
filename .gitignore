@@ -13,7 +13,7 @@
 *.fdb_latexmk 
 *.synctex.gz
 # Optional: uncomment to ignore generated PDFs
-*.pdf 
+!Contents/text/main.pdf 
 
 # Additional Package & Editor Files
 *.lof
