@@ -1,0 +1,39 @@
+\chapter{Iteration \& Recursion}
+\label{ch:iteration}
+
+In imperative programming paradigms, repetitive operations are typically handled using loop constructs like \texttt{for} or \texttt{while}. These constructs act upon the machine state, explicitly commanding the computer to increment a counter or re-evaluate a condition until a threshold is met. 
+
+However, functional programming forbids the mutation of state. If variables cannot change, how can we increment a loop counter? The answer, deeply rooted in mathematical logic and set theory, is \textbf{Recursion}.
+
+\section{The Functional Loop: Recursion}
+Recursion occurs when a function is defined in terms of itself. It is the programmatic equivalent of a mathematical \textit{recurrence relation}. 
+
+Consider the mathematical definition of summing all integers up to $n$, defined as $S(n)$:
+\begin{align*}
+S(0) &= 0 \quad \text{(Base Case)} \\
+S(n) &= n + S(n-1) \quad \text{(Recursive Step)}
+\end{align*}
+
+This elegant mathematical definition translates directly into functional code without the need for arbitrary mutating counter variables. Let us examine how this is implemented in Python:
+
+\lstinputlisting[language=Python, caption={Recursion and Lazy Iteration in Python}, label={lst:chapter6_recursion_py}]{../code/python/chapter6/iteration_recursion.py}
+
+Notice how \texttt{sum\_recursive} is a nearly literal translation of the mathematical recurrence relation. The function continues to add frames to the ``call stack'' until it hits the base case ($n=0$), at which point it collapses back, summing the results.
+
+\section{The Pythonic Compromise: Recursion Limits and \texttt{itertools}}
+While elegant, deep recursion in Python uncovers a structural limitation: Python imposes a strict recursion depth limit to prevent stack overflow errors. If you attempt to recursively sum to 2000, Python will throw a \texttt{RecursionError}.
+
+This limitation exists because Python lacks \textbf{Tail Call Optimization (TCO)}. 
+
+Therefore, pure functional programmers in Python often lean on an incredibly powerful part of the standard library: \texttt{itertools}. This module provides a suite of tools for processing collections of data using \textbf{Iterators} and \textbf{Generators}. 
+
+Generators calculate values \textit{lazily}—they only compute the next value in the sequence when explicitly asked for it. As shown in Listing \ref{lst:chapter6_recursion_py}, we can define an infinite sequence using \texttt{itertools.count} or a custom generator function yielding Fibonacci numbers indefinitely, but our program won't crash because it pulls from this infinite well only as needed.
+
+\section{Haskell: Native TCO and Infinite Lists}
+Unlike Python, strictly pure functional languages like Haskell are built from the ground up to support unbounded recursion.
+
+\lstinputlisting[language=Haskell, caption={Recursion and Infinite Lists in Haskell}, label={lst:chapter6_recursion_hs}]{../code/haskel/chapter6/iteration_recursion.hs}
+
+In Listing \ref{lst:chapter6_recursion_hs}, we see Haskell's pattern matching handle the base case gracefully: \texttt{sumRecursive 0 = 0}. We also introduce the concept of the \textbf{Tail Call}. In \texttt{sumTailRecursive}, the recursive call to the \texttt{go} helper function is the absolute final operation evaluated in that scope. Because there's no lingering work to do after the call, Haskell optimizes the call stack memory away, mutating an accumulator variable silently at the machine-code level while preserving the pure functional interface for the programmer.
+
+Finally, Haskell's extreme dedication to lazy evaluation allows the straightforward declaration of infinite lists: \texttt{[1..]}. The list exists as an unevaluated promise (a ``thunk'') until a function like \texttt{take} forces its evaluation. This allows functional algorithms to describe massive, even endless data structures conceptually without memory explosion.

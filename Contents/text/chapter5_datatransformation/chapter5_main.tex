@@ -1,0 +1,48 @@
+\chapter{Data Transformation}
+\label{ch:datatransformation}
+
+In the previous chapters, we established functions as our fundamental building blocks and elevated them to generic entities capable of being passed around—our so-called ``First-Class Citizens.'' But what is the purpose of passing functions around? Primarily, it is to operate on collections of data. 
+
+In the imperative paradigm, when we want to process a list of elements, we explicitly instruct the computer \textit{how} to iterate over the items using loops (\texttt{for} or \texttt{while} loops). The functional paradigm, by contrast, focuses on \textit{what} transformation is applied to the data. We declare the transformation and rely on higher-order primitives to handle the iteration under the hood.
+
+The three pillars of functional data transformation are \textbf{Map}, \textbf{Filter}, and \textbf{Reduce} (often called Fold).
+
+\section{Mapping: The Art of Uniform Application}
+The \texttt{map} operation takes a function and a collection, and applies that function to every single item in the collection, returning a new collection containing the results. 
+
+Mathematically, if we have a set $S = \{x_1, x_2, \dots, x_n\}$ and a function $f: X \rightarrow Y$, mapping $f$ over $S$ yields a new set $\{f(x_1), f(x_2), \dots, f(x_n)\}$.
+
+Let's look at how we can apply a simple \texttt{square} function to a list of numbers in Python:
+
+\lstinputlisting[language=Python, caption={Mapping in Python}, label={lst:chapter5_map_py}]{../code/python/chapter5/data_transformation.py}
+
+Notice how Python offers the built-in \texttt{map()} function, which we wrap in a \texttt{list()} call since \texttt{map()} returns an iterator in Python 3. We also see the ``Pythonic'' alternative: the List Comprehension. List comprehensions are syntactic sugar that essentially perform mapping (and, as we'll see, filtering) in a very readable, mathematical set-builder notation style.
+
+Now, let's observe the strictly typed, purely functional equivalent in Haskell:
+
+\lstinputlisting[language=Haskell, caption={Mapping in Haskell}, label={lst:chapter5_map_hs}]{../code/haskel/chapter5/data_transformation.hs}
+
+In Haskell, the type signature of \texttt{map} is brilliantly clear: \texttt{(a -> b) -> [a] -> [b]}. It takes a function from type \texttt{a} to type \texttt{b}, and a list of type \texttt{a}, and returns a list of type \texttt{b}.
+
+\section{Filtering: Separating the Wheat from the Chaff}
+While \texttt{map} transforms elements, \texttt{filter} selectively removes them based on a condition. We provide a \textit{predicate} function—a function that returns a boolean (\texttt{True} or \texttt{False}). If the predicate returns \texttt{True} for an element, the element is kept; otherwise, it is discarded.
+
+Returning to our Python code in Listing \ref{lst:chapter5_map_py}, we define an \texttt{is\_even} predicate and use it to filter our \texttt{numbers} list, either using the built-in \texttt{filter()} function or a list comprehension with an \texttt{if} clause. 
+
+Haskell accomplishes the exact same logic (see Listing \ref{lst:chapter5_map_hs}), but its type signature \texttt{(a -> Bool) -> [a] -> [a]} precisely communicates that the input type \texttt{a} remains the output type \texttt{a}; we are simply returning a subset of the original list.
+
+\section{Reduction: Folding Data Together}
+The final core primitive is \textbf{reduce} (in Python) or \textbf{fold} (in Haskell). Reduction takes a collection of items and condenses them down into a single cumulative value. It does this by repeatedly applying a binary function (an ``accumulator'' function taking two arguments) to an accumulated value and the next item in the collection.
+
+For example, to sum a list of numbers, the accumulator function adds the current total to the next number. In Python, you must import \texttt{reduce} from the \texttt{functools} module (since Python's creator preferred explicit loops or the built-in \texttt{sum()} for readability).
+
+In Haskell, folding is a first-class operation with two main variants: \texttt{foldl} (fold left) and \texttt{foldr} (fold right). The direction matters significantly when dealing with non-commutative operations or, crucially in Haskell, infinite lists. Because Haskell evaluates lazily, \texttt{foldr} can sometimes return a result even if the list is infinite, provided the accumulating function short-circuits.
+
+\section{Category Theory Connection: Functors Re-examined}
+We briefly touched upon Functors in the previous chapter. A Functor is broadly any container or computational context that we can \texttt{map} over.
+
+When we define \texttt{map} for a List, we are proving that the List type is a Functor. In Category Theory, a Functor is a mapping between categories that preserves the categorical structure (objects and morphisms). 
+
+By providing a \texttt{map} function with the signature \texttt{(a -> b) -> [a] -> [b]}, we are saying: ``If you give me a morphism (function) from $A$ to $B$ in our base category of types, I will \textit{lift} that morphism into the category of Lists, giving you a morphism from List of $A$ to List of $B$.''
+
+This means that mapping isn't just a convenient loop; it is a fundamental mathematical property of the List structure itself!
