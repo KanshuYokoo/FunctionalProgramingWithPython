@@ -1,0 +1,72 @@
+\chapter{Category Theory for Coders}
+\label{ch:category_theory}
+
+Until now, we have avoided deep academic jargon. We discussed functions as mappings, side effects as broken referential transparency, and higher-order functions as passing behavior around. However, learning Functional Programming without confronting the language of \textbf{Category Theory} is like learning music theory without learning to read sheet music. You can play, but communicating advanced structures with others becomes exceedingly difficult.
+
+This chapter introduces the fundamental patterns born from abstract algebra that give functional programming its unparalleled composability. We will specifically demystify two words that often intimidate newcomers: \textbf{Functors} and \textbf{Monads}.
+
+\section{The Fear of the M-Word}
+
+Category Theory is notoriously abstract. It is the ``mathematics of mathematics,'' studying structures and mappings connecting different mathematical fields. When functional programmers realized their code structures exactly mirrored categorical structures, they borrowed the terminology.
+
+Unfortunately, math words like \textit{Morphism}, \textit{Endofunctor}, and \textit{Monad} sound alien in a software engineering context. A common joke states, ``A monad is just a monoid in the category of endofunctors, what's the problem?'' 
+
+We will ignore the abstract math definitions. Instead, we view Category Theory as a \textbf{Design Pattern Language}. In object-oriented programming, we say ``Singleton'' or ``Factory.'' In functional programming, we say ``Functor'' or ``Monad.'' They are simply structural interfaces for dealing with common coding problems, particularly problems involving \textit{Context}.
+
+\section{Contexts and Containers}
+
+In typed programming, a function has a clear domain and codomain: $f: A \rightarrow B$. In Python, this is a function taking an \texttt{int} and returning a \texttt{str}.
+
+\begin{lstlisting}[language=Python, caption={A simple function}, label={lst:simple_func}]
+def number_to_string(num: int) -> str:
+    return f"Number is: {num}"
+\end{lstlisting}
+
+But what if the value $A$ isn't just an \texttt{int}? What if it is an \texttt{int} wrapped in some computational \textbf{Context}?
+\begin{itemize}
+    \item A \textbf{List} of integers (\texttt{[1, 2, 3]}) is an integer in the context of \textit{multiple possibilities}.
+    \item An \textbf{Optional} integer (\texttt{Optional[int]}) is an integer in the context of \textit{possible absence or failure}.
+\end{itemize}
+
+We cannot pass a \texttt{List[int]} to a function demanding an \texttt{int}. We must somehow extract the value, apply the function, and repackage the result back into the context. This pattern is so ubiquitous that it has a name.
+
+\section{Functors: Lifting Operations}
+
+A \textbf{Functor} is any context or container that can be mapped over. If you have a box containing a value of type $A$, and a function from $A \rightarrow B$, a Functor interface allows you to apply that function to the value inside the box, resulting in a box containing a value of type $B$.
+
+In many programming languages, the operation that defines a Functor is known as \texttt{map} or \texttt{fmap}. 
+
+\subsection{Python: Building a Functor}
+Let's build an \texttt{Optional} (or \texttt{Maybe}) box in Python and give it a \texttt{map} method.
+
+\lstinputlisting[language=Python, caption={Building a Maybe Functor in Python}, label={lst:python_functor}]{../code/python/chapter7/functors.py}
+
+Notice how applying the \texttt{square} function to an empty context (\texttt{Nothing}) gracefully avoids errors. We don't need manual \texttt{if x is not None:} checks sprinkled through our logic. The context handles the absence internally.
+
+\subsection{Haskell: Native Functors}
+Haskell elevates this to a core language feature via the \texttt{Functor} Typeclass. Lists, Maybes, and even I/O operations implement it. We use the \texttt{fmap} function (or its operator equivalent \texttt{<\$>}).
+
+\lstinputlisting[language=Haskell, firstline=9, lastline=22, caption={Mapping contexts in Haskell}, label={lst:haskell_fmap}]{../code/haskel/chapter7/functors_monads.hs}
+
+\section{Monads: Chaining Contextual Computations}
+
+Functors are great when your function returns a normal value ($A \rightarrow B$). What happens when your function \textit{also} returns a context?
+
+Suppose $A \rightarrow Maybe[B]$. If we map this function over a $Maybe[A]$, the result is $Maybe[Maybe[B]]$. We have Russian nesting dolls of contexts. This commonly occurs when chaining operations that might fail: looking up a user in a database (might fail), then looking up their email (might fail).
+
+A \textbf{Monad} is a Functor equipped with an additional operation that flattens contexts upon mapping. This operation is called \texttt{bind} (or \texttt{>>=} in Haskell, or \texttt{flatMap} in other languages). 
+
+\subsection{Python: The Bind Operation}
+Let's extend our Maybe class to be a Monad by adding \texttt{bind}.
+
+\lstinputlisting[language=Python, caption={Chaining Monadic Computations in Python}, label={lst:python_monad}]{../code/python/chapter7/monads.py}
+
+We successfully chained operations without ever writing a nested \texttt{try/except} or checking if a database result was \texttt{None}. This is the power of the Monad pattern: safe, declarative sequencing of contextual operations.
+
+\subsection{Haskell: The `>>=' Operator and Do-Notation}
+
+Haskell uses the bind operator \texttt{>>=} natively. Furthermore, because Monads are so central to structuring Haskell applications, the language provides syntactic sugar called \texttt{do} notation to make monadic chains read like imperative code.
+
+\lstinputlisting[language=Haskell, firstline=28, lastline=56, caption={Monads and Do Notation in Haskell}, label={lst:haskell_monad}]{../code/haskel/chapter7/functors_monads.hs}
+
+This is why Haskell is said to have "programmable semicolons." The \texttt{<-} arrow extracts values from contexts (if they succeed), and automatically short-circuits to \texttt{Nothing} beneath the covers if any step fails. The concept of a Monad solves the lack of \texttt{null} checks and exceptions in a purely mathematical way.
