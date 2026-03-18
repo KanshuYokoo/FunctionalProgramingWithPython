@@ -42,21 +42,10 @@ In Category Theory terms, a pure function is a genuine \textit{morphism}---a rel
 Python allows both pure and impure functions. It is the programmer's discipline that enforces purity. Here is a clear contrast:
 
 A \textbf{pure function}---its only output is its return value, entirely determined by its input:
-\begin{verbatim}
-def add(x: int, y: int) -> int:
-    return x + y
-\end{verbatim}
+\lstinputlisting[language=Python, caption=Python: Pure function]{../code/python/chapter3/pure_add.py}
 
 An \textbf{impure function}---it reads from and modifies the external world:
-\begin{verbatim}
-count: int = 0
-
-def increment_and_add(x: int) -> int:
-    global count
-    count += 1        # side effect: modifies external state
-    print(count)      # side effect: performs I/O
-    return x + count  # result depends on hidden external state
-\end{verbatim}
+\lstinputlisting[language=Python, caption=Python: Impure function]{../code/python/chapter3/impure_add.py}
 
 The impure version is unpredictable. Its output for \texttt{increment\_and\_add(5)} changes every time it is called---even with the same argument. This makes it extremely difficult to reason about, test, and compose with other functions.
 
@@ -81,14 +70,10 @@ Haskell enforces this separation at the type level using the \texttt{IO} type. A
 \textbf{Referential Transparency} is a formal property that arises directly from using pure functions. An expression is referentially transparent if it can be replaced with its computed value without changing the behaviour of the program.
 
 Consider this expression in Python:
-\begin{verbatim}
-result = add(2, 3) + add(2, 3)
-\end{verbatim}
+\lstinputlisting[language=Python, caption=Python: Referential transparency example 1]{../code/python/chapter3/ref_transparency_1.py}
 
 Because \texttt{add} is a pure function that always returns 5 for inputs \texttt{(2, 3)}, we can freely substitute:
-\begin{verbatim}
-result = 5 + 5
-\end{verbatim}
+\lstinputlisting[language=Python, caption=Python: Referential transparency example 2]{../code/python/chapter3/ref_transparency_2.py}
 
 The program behaves identically. \texttt{add(2, 3)} is referentially transparent because it is pure.
 
