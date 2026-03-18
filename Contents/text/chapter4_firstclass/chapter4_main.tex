@@ -13,6 +13,26 @@ When we say a language treats functions as ``First-Class Citizens,'' we mean tha
     \item Return a function as the result of another function.
 \end{enumerate}
 
+\subsection{The Categorical View: Morphisms and Exponential Objects}
+
+To truly appreciate what it means for a function to be data, we can look to \textbf{Category Theory}, a branch of mathematics that serves as the theoretical foundation for functional programming. 
+
+In Category Theory, a category consists of two primary constructs:
+\begin{itemize}
+    \item \textbf{Objects}: In programming, you can think of these as data types (e.g., \texttt{Integer}, \texttt{String}, \texttt{Boolean}).
+    \item \textbf{Morphisms}: These are the ``arrows'' or mappings between objects. In programming, a morphism from object $A$ to object $B$ is simply a function that takes an argument of type $A$ and returns a value of type $B$ (written mathematically as $f: A \to B$).
+\end{itemize}
+
+Normally, objects and morphisms are distinct concepts. Objects are the ``things,'' and morphisms are the ``actions'' between those things. 
+
+However, functional programming languages (specifically those whose type systems form a \textit{Cartesian closed category}) introduce a profound concept called an \textbf{exponential object} (sometimes called an internal hom-object). 
+
+An exponential object, often denoted as $B^A$ or $A \Rightarrow B$, takes the entire set of morphisms (functions) from $A$ to $B$ and groups them into \textit{a brand new object within the category itself}. 
+
+When a category has exponential objects, it means that the ``action'' (the morphism) has been crystallized into a ``thing'' (an object). Because the function $A \to B$ is now recognized mathematically as an object $B^A$, it gains all the fundamental rights of any other object. You can draw new arrows (write new functions) that take $B^A$ as an input, or that return $B^A$ as an output. 
+
+This categorical abstraction is the exact mathematical equivalent of treating functions as first-class citizens in code. It tells us that functions are not just invisible pipelines moving data---they are tangible data themselves, ready to be stored, passed, and manipulated.
+
 \section{Passing Functions as Data}
 
 Let us look at how this works in practice. Suppose we want to apply a transformation to a number. Instead of hardcoding the transformation, we can pass the transformation \textit{as a function}.
