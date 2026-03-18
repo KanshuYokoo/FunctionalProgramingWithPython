@@ -57,10 +57,10 @@ As an AI assistant working on this project, adhere strictly to the following org
    - If a chapter has multiple distinct sections, split them further into separate `.tex` files and `\input{}` them into the `chapterX_main.tex`.
 
 3. **Code Separation (`Contents/code`):**
-   - Save all code snippets in the `Contents/code/` directory, separated by language:
+   - Save all code snippets in the `Contents/code/` directory, separated by language. **This is mandatory even if the code snippet is very small:**
      - `Contents/code/python/chapterX/`
      - `Contents/code/haskel/chapterX/`
-   - Use LaTeX's `\lstinputlisting` to display code directly from these source files rather than pasting code blocks directly into the `.tex` files.
+   - Use LaTeX's `\lstinputlisting` to display code directly from these source files rather than pasting code blocks directly into the `.tex` files. **Never write inline code blocks (e.g. using `verbatim`) inside the textbook text.**
 
 4. **Image Separation (`Contents/images`):**
    - Save all figures and diagrams in `Contents/images/chapterX/`.
