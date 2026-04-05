@@ -74,4 +74,20 @@ A \textbf{Category} is simply a collection of two things:
 
 When you write a pure function in Python or Haskell, you are defining a morphism between two objects in the ``Category of Types'' (often called \textbf{Hask} in the Haskell world).
 
+\subsection{The Law of Composition}
+Having objects and arrows is not enough to truly be a Category. The most critical requirement of Category Theory is \textbf{Composition}. If you have a morphism $f$ from A to B, and a morphism $g$ from B to C, there \textit{must} exist a composite morphism that goes directly from A to C.
+
+Mathematically, this is written as:
+\[ g \circ f : A \rightarrow C \]
+
+This is read as ``$g$ composed with $f$''. It means you apply $f$ to an input first, and then apply $g$ to the result. In programming, this is simply chaining function calls together.
+
+Let us write a function that performs this exact mathematical composition in Python. Notice we rely on our definitions of pure functions from earlier:
+
+\lstinputlisting[language=Python, caption=Function Composition in Python]{../code/python/chapter1/compose.py}
+
+In Haskell, composition is so fundamental to the mathematics of the language that there is a built-in operator for it, the dot (\texttt{.}):
+
+\lstinputlisting[language=Haskell, caption=Function Composition natively in Haskell]{../code/haskel/chapter1/compose.hs}
+
 As we progress through this book, we will rely heavily on this simple visual metaphor. By treating types as dots (objects) and functions as arrows (morphisms) connecting those dots, complex programming concepts will become elegantly simple.
