@@ -48,6 +48,24 @@ Haskell elevates this to a core language feature via the \texttt{Functor} Typecl
 
 \lstinputlisting[language=Haskell, firstline=9, lastline=22, caption={Mapping contexts in Haskell}, label={lst:haskell_fmap}]{../code/haskel/chapter7/functors_monads.hs}
 
+\subsection{Proving the Functor Laws}
+A proper Functor must obey two strict mathematical laws to guarantee predictable behavior:
+\begin{enumerate}
+    \item \textbf{Identity}: Mapping the identity function over the container must return the exact same container. ($fmap(\text{id}) = \text{id}$)
+    \item \textbf{Composition}: Mapping a composed function is identical to mapping one function, then mapping the second. ($fmap(g \circ f) = fmap(g) \circ fmap(f)$)
+\end{enumerate}
+
+\lstinputlisting[language=Python, caption={Proving Functor Laws in Python}]{../code/python/chapter7/functor_laws.py}
+
+\section{The Missing Link: Applicative Functors}
+Before we jump to Monads, there is a crucial intermediate step. Functors are great when your function is normal ($A \rightarrow B$) and your value is in a box ($Box[A]$).
+
+What happens if \textit{both} your function and your value are trapped in a box? Suppose you have a $Box[A \rightarrow B]$ and a $Box[A]$. Regular \texttt{map} cannot handle this. We need a new operation, often called \texttt{apply} or \texttt{<*>}.
+
+A Functor equipped with this \texttt{apply} capability is called an \textbf{Applicative Functor}. It essentially allows functions with multiple boxed arguments to evaluate safely.
+
+\lstinputlisting[language=Python, caption={Applicative apply in Python}]{../code/python/chapter7/applicative.py}
+
 \section{Monads: Chaining Contextual Computations}
 
 Functors are great when your function returns a normal value ($A \rightarrow B$). What happens when your function \textit{also} returns a context?
@@ -70,3 +88,22 @@ Haskell uses the bind operator \texttt{>>=} natively. Furthermore, because Monad
 \lstinputlisting[language=Haskell, firstline=28, lastline=56, caption={Monads and Do Notation in Haskell}, label={lst:haskell_monad}]{../code/haskel/chapter7/functors_monads.hs}
 
 This is why Haskell is said to have "programmable semicolons." The \texttt{<-} arrow extracts values from contexts (if they succeed), and automatically short-circuits to \texttt{Nothing} beneath the covers if any step fails. The concept of a Monad solves the lack of \texttt{null} checks and exceptions in a purely mathematical way.
+
+\subsection{Proving the Monad Laws}
+Just like Functors, Monads must obey three strict algebraic laws. These ensure that the \texttt{bind} operation behaves sensibly:
+\begin{enumerate}
+    \item \textbf{Left Identity}: Wrapping a value in a context and then binding it to a function is the same as just calling the function on the raw value.
+    \item \textbf{Right Identity}: Binding a monadic value to the basic wrapping function results in the original monadic value.
+    \item \textbf{Associativity}: When chaining a sequence of monadic binds, the order of evaluations (grouping) does not matter.
+\end{enumerate}
+
+\lstinputlisting[language=Python, caption={Monad Laws verified in Python}]{../code/python/chapter7/monads_laws.py}
+
+\section{Beyond Maybe: The Either Monad}
+Relying solely on \texttt{Maybe} (or \texttt{Optional}) is limiting because when a computation fails, it simply returns \texttt{Nothing}. In a real application, we want to know \textit{why} it failed.
+
+Enter the \textbf{Either} (or \textbf{Result}) Monad. The \texttt{Either} monad encapsulates two possible paths: a \textbf{Left} path (usually storing an error message) and a \textbf{Right} path (storing successful data). When we bind computations, the Right path continues normally. If any step yields a Left, the entire chain short-circuits and passes the Left error downward.
+
+\lstinputlisting[language=Python, caption={The Either Monad in Python}]{../code/python/chapter7/either_monad.py}
+\lstinputlisting[language=Haskell, caption={The Either Monad natively in Haskell}]{../code/haskel/chapter7/either_monad.hs}
+\lstinputlisting[language=Haskell, caption={Verifying Laws in Haskell}]{../code/haskel/chapter7/laws_and_applicatives.hs}
