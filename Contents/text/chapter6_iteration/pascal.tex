@@ -1,0 +1,81 @@
+\section{Tree Recursion: Pascal's Triangle}
+\label{sec:pascal_triangle}
+
+So far, we have looked at linear recursion, where each function call triggers at most one other recursive call (such as Factorial or Euclid's GCD). However, recursion can also branch. When a function makes multiple recursive calls within its body, it is known as \textbf{Tree Recursion}. 
+
+A classic mathematical structure that perfectly demonstrates tree recursion is \textbf{Pascal's Triangle}.
+
+\subsection{Mathematical Background}
+
+Pascal's Triangle is a geometric arrangement of the binomial coefficients. Each number in the triangle is the sum of the two numbers directly above it. 
+
+If we represent the number at column $c$ and row $r$ (using 0-based indexing) as $\text{pascal}(c, r)$, we can define this structure using the classical combinations formula from combinatorics (often read as ``$r$ choose $c$''):
+\[
+\binom{r}{c} = \frac{r!}{c!(r - c)!}
+\]
+
+Rather than calculating factorials directly, we can define the triangle using \textit{Pascal's Identity}, which yields the following recursive recurrence relation:
+\[
+\text{pascal}(c, r) = \text{pascal}(c - 1, r - 1) + \text{pascal}(c, r - 1)
+\]
+for $0 < c < r$. The boundary elements of the triangle are always 1, giving us our base cases:
+\[
+\text{pascal}(0, r) = 1 \quad \text{and} \quad \text{pascal}(r, r) = 1
+\]
+
+This mathematical definition maps elegantly to code. Let's look at the Python implementation of this recursive relation:
+
+\lstinputlisting[language=Python, caption={Tree Recursion and Memoization in Python}, label={lst:pascal_py}]{../code/python/chapter6/pascal.py}
+
+\subsection{Tree Recursion and Complexity}
+
+In Listing \ref{lst:pascal_py}, notice how \texttt{pascal(c, r)} calls itself twice in its recursive step: once for \texttt{pascal(c - 1, r - 1)} and once for \texttt{pascal(c, r - 1)}. 
+
+If we visualize the execution of \texttt{pascal(2, 4)}, we can see a tree of calls branching out:
+\begin{center}
+\begin{picture}(420,100)
+\put(210,90){\makebox(0,0){\texttt{pascal(2,4)}}}
+\put(185,78){\line(-4,-1){40}}
+\put(235,78){\line(4,-1){40}}
+\put(110,55){\makebox(0,0){\texttt{pascal(1,3)}}}
+\put(310,55){\makebox(0,0){\texttt{pascal(2,3)}}}
+\put(90,43){\line(-2,-1){26}}
+\put(130,43){\line(2,-1){26}}
+\put(290,43){\line(-2,-1){26}}
+\put(330,43){\line(2,-1){26}}
+\put(45,20){\makebox(0,0){\texttt{pascal(0,2)}}}
+\put(175,20){\makebox(0,0){\texttt{pascal(1,2)}}}
+\put(245,20){\makebox(0,0){\texttt{pascal(1,2)}}}
+\put(375,20){\makebox(0,0){\texttt{pascal(2,2)}}}
+\end{picture}
+\end{center}
+
+Because the recursion tree branches at each level, the number of steps grows exponentially. For row $r$, the time complexity is $O(2^r)$. 
+
+However, look closely at the call tree: \texttt{pascal(1,2)} is calculated multiple times. As $r$ grows, this redundant calculation explodes, causing severe performance degradation.
+
+\subsection{Functional Optimization: Memoization}
+
+In functional programming, functions are \textbf{pure} and exhibit \textbf{referential transparency}. This means a function call like \texttt{pascal(1, 2)} will *always* return the same value (\texttt{2}) no matter when or how many times it is called.
+
+Because of this property, we can optimize tree recursion using a technique called \textbf{Memoization} (caching the results of function calls). As shown in Listing \ref{lst:pascal_py}, we can decorate the Python function with \texttt{@lru\_cache}. When \texttt{pascal\_memoized(c, r)} is called, the system first checks if the arguments $(c, r)$ have been evaluated before. If so, it returns the cached result immediately, pruning the recursive tree. This changes the complexity from exponential $O(2^r)$ to quadratic $O(r^2)$.
+
+\subsection{Infinite Triangles in Haskell}
+
+Haskell's GHC compiler can easily compile tree recursion. However, Haskell allows us to approach the problem from another functional perspective: constructing the entire triangle as a lazy infinite list of lists.
+
+\lstinputlisting[language=Haskell, caption={Tree Recursion and Lazy Infinite Pascal's Triangle in Haskell}, label={lst:pascal_hs}]{../code/haskel/chapter6/pascal.hs}
+
+In Listing \ref{lst:pascal_hs}, \texttt{pascalTriangle} uses the higher-order function \texttt{iterate}. It starts with the first row \texttt{[1]} and continuously generates the next row using:
+\[
+\text{nextRow}(row) = \text{zipWith}(+) \, (0 : row) \, (row \mathbin{++} [0])
+\]
+
+For example, starting with \texttt{[1, 2, 1]}:
+\begin{align*}
+0 : row &= [0, 1, 2, 1] \\
+row \mathbin{++} [0] &= [1, 2, 1, 0] \\
+\text{zipWith}(+) \text{ outputs} &\rightarrow [1, 3, 3, 1]
+\end{align*}
+
+Because Haskell is lazy, this infinite triangle costs nothing in memory until we explicitly extract elements using a function like \texttt{take}. This shows how functional programming lets us represent mathematical systems as complete, infinite structures rather than simple step-by-step loops.
