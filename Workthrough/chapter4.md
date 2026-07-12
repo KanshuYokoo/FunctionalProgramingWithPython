@@ -31,5 +31,12 @@
 
 ## Resources Created
 - **Text:** `Contents/text/chapter4_firstclass/chapter4_main.tex`
-- **Python:** `Contents/code/python/chapter4/firstclass.py`
-- **Haskell:** `Contents/code/haskel/chapter4/firstclass.hs`
+- **Python:**
+  - `Contents/code/python/chapter4/apply_twice.py`
+  - `Contents/code/python/chapter4/summation.py`
+  - `Contents/code/python/chapter4/map_filter_reduce.py`
+- **Haskell:**
+  - `Contents/code/haskel/chapter4/apply_twice.hs`
+  - `Contents/code/haskel/chapter4/summation.hs`
+  - `Contents/code/haskel/chapter4/map_filter_reduce.hs`
+
