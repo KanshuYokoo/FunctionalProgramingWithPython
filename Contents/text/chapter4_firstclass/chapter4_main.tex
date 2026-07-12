@@ -91,6 +91,40 @@ By treating function spaces as first-class mathematical spaces, we can construct
 
 This taxonomy bridges the gap between software engineering and classical analysis. When you write a Higher-Order Function, you are not merely organizing code; you are building mathematical functionals and operators on function spaces.
 
+\subsection{Returning Functions as Results: Operators}
+
+So far, we have focused on Higher-Order Functions that take functions as arguments. However, the second half of the HOF definition is equally powerful: \textbf{functions that return other functions as their results}. 
+
+In pure mathematics, functions that map functions to other functions are often called \textbf{operators}. When a programming function returns a function, it acts as a factory or an operator, producing a new, customized behavior that can be executed later.
+
+Let us explore this concept through two fundamental examples: numerical differentiation and function composition.
+
+\subsubsection{The Numerical Derivative Operator}
+
+In calculus, the derivative operator $D$ takes a continuous function $f(x)$ and returns its derivative function $f'(x)$, representing the rate of change at any point $x$. 
+
+We can write a higher-order function \texttt{derivative} that acts as this exact operator. It takes a function $f$ (and a small step size $dx$) and returns a new function representing the numerical derivative $f'$:
+
+\lstinputlisting[language=Python, caption={Python: Numerical Derivative Operator}]{../code/python/chapter4/derivative.py}
+
+In Haskell, we can write this operator with identical mathematical elegance. Since Haskell has native support for lambda expressions, we return a lambda representing the derivative:
+
+\lstinputlisting[language=Haskell, caption={Haskell: Numerical Derivative Operator}]{../code/haskel/chapter4/derivative.hs}
+
+In both languages, when we call \texttt{derivative(square)}, we do not receive a number; we receive a new function. We can then apply this new function to any input (e.g., $x = 3.0$), which will evaluate the derivative at that specific point.
+
+\subsubsection{Function Composition}
+
+In Category Theory, the composition of two morphisms $g: B \to C$ and $f: A \to B$ is a fundamental law. The composition operator $(\circ)$ takes these two functions and returns a new composite function $g \circ f: A \to C$.
+
+We can write a higher-order function \texttt{compose} that takes two functions as arguments and returns their composition as a new function:
+
+\lstinputlisting[language=Python, caption={Python: Function Composition}]{../code/python/chapter4/compose.py}
+
+In Haskell, the manual implementation of composition is a straightforward higher-order function returning a lambda. (Haskell also provides the dot operator \texttt{.} to compose functions natively).
+
+\lstinputlisting[language=Haskell, caption={Haskell: Function Composition}]{../code/haskel/chapter4/compose.hs}
+
 \subsection{Map, Filter, and Reduce}
 
 Because functional programmers use Higher-Order Functions constantly, three specific HOFs have become the universal standard for processing lists of data: \texttt{map}, \texttt{filter}, and \texttt{reduce} (often called \texttt{fold}).

@@ -34,9 +34,13 @@
 - **Python:**
   - `Contents/code/python/chapter4/apply_twice.py`
   - `Contents/code/python/chapter4/summation.py`
+  - `Contents/code/python/chapter4/derivative.py`
+  - `Contents/code/python/chapter4/compose.py`
   - `Contents/code/python/chapter4/map_filter_reduce.py`
 - **Haskell:**
   - `Contents/code/haskel/chapter4/apply_twice.hs`
   - `Contents/code/haskel/chapter4/summation.hs`
+  - `Contents/code/haskel/chapter4/derivative.hs`
+  - `Contents/code/haskel/chapter4/compose.hs`
   - `Contents/code/haskel/chapter4/map_filter_reduce.hs`
 
