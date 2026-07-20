@@ -125,6 +125,56 @@ In Haskell, the manual implementation of composition is a straightforward higher
 
 \lstinputlisting[language=Haskell, caption={Haskell: Function Composition}]{../code/haskel/chapter4/compose.hs}
 
+\subsection{Currying and Partial Application}
+
+Another crucial concept that relies on returning functions is \textbf{Currying}, named in honor of the logician Haskell Curry (and independently discovered by Moses Schönfinkel). Currying is the technique of converting a function that takes multiple arguments into a chain of functions that each take a single argument.
+
+\paragraph{Mathematical Foundation: Product Spaces and Function Spaces}
+
+To understand currying, we must first define two core mathematical concepts:
+\begin{itemize}
+    \item \textbf{Product Space}: If we have sets $A$ and $B$, their Cartesian product $A \times B$ is the set of all ordered pairs $(a, b)$. A traditional function of two variables accepts its arguments as a single pair from this product space:
+    \[ f : (A \times B) \to C \]
+    In programming, this corresponds to passing a tuple of arguments, such as \texttt{f(x, y)}.
+    \item \textbf{Function Space (Exponential Object)}: In set theory, the set of all functions mapping from a set $B$ to a set $C$ is written as $C^B$ (read as ``$C$ to the power of $B$'' or simply the function space $B \to C$). 
+    The exponential notation is highly intuitive: if $B$ and $C$ are finite sets, the total number of unique functions from $B$ to $C$ is exactly $|C|^{|B|}$. In programming, $C^B$ represents a function type signature, such as a function that expects an argument of type $B$ and yields a result of type $C$.
+\end{itemize}
+
+\paragraph{The Product-Exponential Adjunction: Step-by-Step}
+
+Mathematically, currying asserts that the set of functions on a product space is isomorphic (has a one-to-one correspondence) to the set of functions returning functions. This is written exponentially as:
+\[ C^{A \times B} \cong (C^B)^A \]
+
+Let us break down why this is true step-by-step:
+\begin{enumerate}
+    \item \textbf{Step 1: The Product-Based Function (Uncurried)}:
+    Consider a function $f : A \times B \to C$. It expects a pair $(a, b)$ all at once. Once both values are provided, it yields a result $c \in C$:
+    \[ f(a, b) = c \]
+    \item \textbf{Step 2: The Nested Function (Curried)}:
+    Now consider a function $g : A \to C^B$. It accepts only a single element $a \in A$, and returns a function $h_a : B \to C$. This returned function $h_a$, when subsequently given $b \in B$, yields the final result $c \in C$:
+    \[ g(a)(b) = h_a(b) = c \]
+    \item \textbf{Step 3: The Translation (Curry \& Uncurry)}:
+    Because $f$ and $g$ represent the exact same relationship between the inputs and output, we can translate between them without losing any information:
+    \begin{itemize}
+        \item To turn $f$ into $g$ (currying), we define: $g(a) = (b \mapsto f(a, b))$.
+        \item To turn $g$ into $f$ (uncurrying), we define: $f(a, b) = g(a)(b)$.
+    \end{itemize}
+    \item \textbf{Step 4: The Adjunction Formality}:
+    In Category Theory, this bijection is formalized as the \textbf{Product-Exponential Adjunction}:
+    \[ \text{Hom}(A \times B, C) \cong \text{Hom}(A, C^B) \]
+    This adjunction states that the product functor $(-\times B)$ is left adjoint to the exponential functor $(-)^B$. It guarantees that any multi-argument function can be modeled as a single-argument higher-order function returning another function.
+\end{enumerate}
+
+\paragraph{Currying in Code}
+
+In Python, functions take multiple parameters by default. To curry them, we can write generic higher-order functions \texttt{curry} and \texttt{uncurry} to automate this translation:
+
+\lstinputlisting[language=Python, caption={Python: Curry and Uncurry}]{../code/python/chapter4/currying.py}
+
+In Haskell, all functions are curried by default. If you write a function with signature \texttt{add :: Int -> Int -> Int}, Haskell automatically parses this type signature right-associatively as \texttt{add :: Int -> (Int -> Int)}. The compiler passes one argument at a time, returning an intermediate function. However, Haskell also provides standard library helpers to translate to and from tuple-based (product space) functions:
+
+\lstinputlisting[language=Haskell, caption={Haskell: Curry and Uncurry}]{../code/haskel/chapter4/currying.hs}
+
 \subsection{Map, Filter, and Reduce}
 
 Because functional programmers use Higher-Order Functions constantly, three specific HOFs have become the universal standard for processing lists of data: \texttt{map}, \texttt{filter}, and \texttt{reduce} (often called \texttt{fold}).
