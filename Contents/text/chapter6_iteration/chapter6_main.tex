@@ -37,3 +37,6 @@ Unlike Python, strictly pure functional languages like Haskell are built from th
 In Listing \ref{lst:chapter6_recursion_hs}, we see Haskell's pattern matching handle the base case gracefully: \texttt{sumRecursive 0 = 0}. We also introduce the concept of the \textbf{Tail Call}. In \texttt{sumTailRecursive}, the recursive call to the \texttt{go} helper function is the absolute final operation evaluated in that scope. Because there's no lingering work to do after the call, Haskell optimizes the call stack memory away, mutating an accumulator variable silently at the machine-code level while preserving the pure functional interface for the programmer.
 
 Finally, Haskell's extreme dedication to lazy evaluation allows the straightforward declaration of infinite lists: \texttt{[1..]}. The list exists as an unevaluated promise (a ``thunk'') until a function like \texttt{take} forces its evaluation. This allows functional algorithms to describe massive, even endless data structures conceptually without memory explosion.
+
+\input{chapter6_iteration/tail_recursion}
+\input{chapter6_iteration/pascal}

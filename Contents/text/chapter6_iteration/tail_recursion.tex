@@ -1,0 +1,69 @@
+\section{Tail Recursion: Euclid's GCD vs. Factorial}
+\label{sec:tail_recursion}
+
+In our exploration of recursion, we have seen that recursive functions can be extremely elegant translations of mathematical recurrence relations. However, we also encountered a physical constraint in Python: the call stack. When a function calls itself, the runtime system must allocate memory (a stack frame) to keep track of the local variables and the execution state of the calling function.
+
+But not all recursive calls are created equal. Depending on where the recursive call occurs inside the function, compilers and interpreters can perform a powerful optimization called \textbf{Tail Call Optimization (TCO)}. 
+
+\subsection{Defining the Tail Position}
+
+A function call is said to be in the \textbf{tail position} if it is the absolute final action performed by the function before returning. If a function's recursive call is in the tail position, the function is \textbf{tail-recursive}.
+
+Why does this matter? If the recursive call is the last thing a function does, the runtime doesn't need to keep the current stack frame alive. There are no local variables to inspect and no operations left to perform after the sub-call returns. The runtime can simply reuse the current stack frame for the next recursive call. This turns a potentially stack-overflowing recursion into a memory-efficient loop that runs in $O(1)$ space.
+
+Let us compare two classic mathematical algorithms to see the difference between a tail call and a non-tail call.
+
+\subsection{Greatest Common Divisor (Euclid's Algorithm)}
+
+Euclid's algorithm for finding the greatest common divisor (GCD) of two integers $a$ and $b$ is defined recursively as:
+\[
+\gcd(a, b) = 
+\begin{cases} 
+a & \text{if } b = 0 \\ 
+\gcd(b, a \bmod b) & \text{otherwise} 
+\end{cases}
+\]
+
+Let's look at the structure of the recursive step: $\gcd(b, a \bmod b)$. When the function makes this recursive call, it does not perform any operation on the result. The value returned by the recursive call is immediately returned to the caller. Therefore, Euclid's algorithm is \textbf{naturally tail-recursive}.
+
+\subsection{Factorial Calculation}
+
+Now, consider the mathematical definition of the factorial of a non-negative integer $n$, denoted as $n!$:
+\[
+n! = 
+\begin{cases} 
+1 & \text{if } n = 0 \\ 
+n \times (n - 1)! & \text{otherwise} 
+\end{cases}
+\]
+
+If we translate this recurrence relation directly into a recursive function, the recursive step evaluates $n \times (n-1)!$. 
+Here, the recursive call is $(n-1)!$. After this call returns a value, the function must multiply that value by $n$. Because of this pending multiplication operation, the recursive call is \textbf{not} in the tail position. The runtime must retain every single stack frame to remember the multiplier $n$ for each step of the recursion.
+
+\subsection{The Accumulator Pattern}
+
+To make the factorial function tail-recursive, we must eliminate the pending multiplication after the recursive call. We can do this using the \textbf{Accumulator Pattern}.
+
+Instead of waiting for the recursive call to return before multiplying, we multiply first and pass the running product down to the next call using an extra parameter: the **accumulator** ($acc$). 
+Mathematically, we can reformulate the factorial relation with an auxiliary function $F(n, acc)$:
+\begin{align*}
+F(0, acc) &= acc \\
+F(n, acc) &= F(n - 1, n \times acc)
+\end{align*}
+We compute $n!$ by initializing the accumulator to 1: $n! = F(n, 1)$.
+
+Because the recursive call $F(n - 1, n \times acc)$ has no pending operations, it is now in the tail position.
+
+\subsection{Code Implementations}
+
+Let us examine these concepts side-by-side. First, we look at the Python implementations:
+
+\lstinputlisting[language=Python, caption={Tail Recursion and Euclid's GCD in Python}, label={lst:tail_recursion_py}]{../code/python/chapter6/tail_recursion.py}
+
+Although Python does not support TCO automatically (due to design philosophies surrounding stack traces and debugging), writing code in a tail-recursive style is still an important exercise for understanding functional structure. 
+
+In GHC (the Haskell compiler), tail recursion is fully optimized. Let's inspect the Haskell equivalent:
+
+\lstinputlisting[language=Haskell, caption={Tail Recursion and Euclid's GCD in Haskell}, label={lst:tail_recursion_hs}]{../code/haskel/chapter6/tail_recursion.hs}
+
+In Listing \ref{lst:tail_recursion_hs}, we implement the accumulator pattern for the factorial function using a local helper function named \texttt{go}. GHC will recognize both \texttt{factorialTailRecursive} and \texttt{gcdEuclid} as tail-recursive and optimize them into flat loops at compile time, completely eliminating the risk of stack overflows.

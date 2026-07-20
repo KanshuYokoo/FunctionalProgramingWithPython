@@ -1,0 +1,105 @@
+\section{Tree Recursion: Pascal's Triangle}
+\label{sec:pascal_triangle}
+
+So far, we have looked at linear recursion, where each function call triggers at most one other recursive call (such as Factorial or Euclid's GCD). However, recursion can also branch. When a function makes multiple recursive calls within its body, it is known as \textbf{Tree Recursion}. 
+
+A classic mathematical structure that perfectly demonstrates tree recursion is \textbf{Pascal's Triangle}.
+
+\subsection{Mathematical Background}
+
+Pascal's Triangle is a geometric arrangement of the binomial coefficients. Each number in the triangle is the sum of the two numbers directly above it. 
+
+If we represent the number at column $c$ and row $r$ (using 0-based indexing) as $\text{pascal}(c, r)$, we can define this structure using the classical combinations formula from combinatorics (often read as ``$r$ choose $c$''):
+\[
+\binom{r}{c} = \frac{r!}{c!(r - c)!}
+\]
+
+Rather than calculating factorials directly, we can define the triangle using \textit{Pascal's Identity}, which yields the following recursive recurrence relation:
+\[
+\text{pascal}(c, r) = \text{pascal}(c - 1, r - 1) + \text{pascal}(c, r - 1)
+\]
+for $0 < c < r$. The boundary elements of the triangle are always 1, giving us our base cases:
+\[
+\text{pascal}(0, r) = 1 \quad \text{and} \quad \text{pascal}(r, r) = 1
+\]
+
+This mathematical definition maps elegantly to code. Let's look at the Python implementation of this recursive relation:
+
+\lstinputlisting[language=Python, caption={Tree Recursion and Memoization in Python}, label={lst:pascal_py}]{../code/python/chapter6/pascal.py}
+
+\subsection{Tree Recursion and Complexity}
+
+To understand why this recursive process is structurally different from what we have seen before, we must contrast it with \textbf{Linear Recursion}. 
+
+In linear recursion (such as our factorial or sum implementations), each active function call triggers at most one other recursive call. The execution path is a straight chain of frames:
+\[
+f(n) \rightarrow f(n-1) \rightarrow f(n-2) \rightarrow \dots \rightarrow \text{Base Case}
+\]
+The time required is directly proportional to the recursion depth $d$, yielding a linear time complexity of $O(d)$.
+
+In \textbf{Tree Recursion}, a function call can spawn multiple recursive subcalls. This shifts the execution topology from a single chain into a branching tree. Two key parameters define the execution profile of a tree-recursive algorithm:
+\begin{itemize}
+    \item \textbf{Branching Factor ($b$)}: The number of recursive calls made within the body of a non-base function. For Pascal's Triangle, the branching factor is $b = 2$, since computing a cell requires two subcalls.
+    \item \textbf{Recursion Depth ($d$)}: The maximum distance from the root call (the initial call) to a leaf node (a base case) in the call tree. For \texttt{pascal(c, r)}, the maximum depth is proportional to the row index $r$.
+\end{itemize}
+
+If we visualize the execution of \texttt{pascal(2, 4)}, we can see a tree of calls branching out:
+\begin{center}
+\begin{picture}(420,100)
+\put(210,90){\makebox(0,0){\texttt{pascal(2,4)}}}
+\put(185,78){\line(-4,-1){40}}
+\put(235,78){\line(4,-1){40}}
+\put(110,55){\makebox(0,0){\texttt{pascal(1,3)}}}
+\put(310,55){\makebox(0,0){\texttt{pascal(2,3)}}}
+\put(90,43){\line(-2,-1){26}}
+\put(130,43){\line(2,-1){26}}
+\put(290,43){\line(-2,-1){26}}
+\put(330,43){\line(2,-1){26}}
+\put(45,20){\makebox(0,0){\texttt{pascal(0,2)}}}
+\put(175,20){\makebox(0,0){\texttt{pascal(1,2)}}}
+\put(245,20){\makebox(0,0){\texttt{pascal(1,2)}}}
+\put(375,20){\makebox(0,0){\texttt{pascal(2,2)}}}
+\end{picture}
+\end{center}
+
+\subsubsection{Time vs. Space Complexity in Tree Recursion}
+
+A common pitfall is assuming that the exponential growth in the number of calculations translates to a similar growth in memory usage. This is not the case:
+
+\begin{enumerate}
+    \item \textbf{Time Complexity ($O(2^r)$)}: In a full binary tree of depth $d$, the total number of nodes is given by $2^{d+1} - 1$. Since our recursion depth is bounded by the row index $r$, the total number of function calls scales exponentially, resulting in a time complexity of $O(2^r)$. For large rows, this is computationally prohibitive.
+    \item \textbf{Space Complexity ($O(r)$)}: The space complexity of a recursive algorithm is determined by the maximum number of stack frames active on the call stack at any single point in time. When evaluating the expression \texttt{pascal(c - 1, r - 1) + pascal(c, r - 1)}, the runtime evaluates the left subcall first. It traverses all the way down to a base case (a leaf node) before evaluating the right subcall. Once a leaf returns its value, its stack frame is immediately popped and freed. Consequently, the call stack only ever holds a single path from the root of the tree to a leaf at any given moment. Thus, the space complexity remains strictly linear, $O(r)$.
+\end{enumerate}
+
+\subsubsection{Overlapping Subproblems}
+
+The core efficiency bottleneck in naive tree recursion is the presence of \textbf{overlapping subproblems}. Look closely at our call tree for \texttt{pascal(2, 4)}: both the left branch \texttt{pascal(1, 3)} and the right branch \texttt{pascal(2, 3)} recursively call \texttt{pascal(1, 2)}. 
+
+Because these two branches are independent, the program will calculate the value of \texttt{pascal(1, 2)} twice from scratch. As $r$ grows, the overlapping subproblems multiply exponentially. 
+For instance, computing the center element of row 30 requires over a billion calls, even though there are only a few hundred unique coordinates in the entire triangle up to that row.
+
+\subsection{Functional Optimization: Memoization}
+
+In functional programming, functions are \textbf{pure} and exhibit \textbf{referential transparency}. This means a function call like \texttt{pascal(1, 2)} will *always* return the same value (\texttt{2}) no matter when or how many times it is called.
+
+Because of this property, we can optimize tree recursion using a technique called \textbf{Memoization} (caching the results of function calls). As shown in Listing \ref{lst:pascal_py}, we can decorate the Python function with \texttt{@lru\_cache}. When \texttt{pascal\_memoized(c, r)} is called, the system first checks if the arguments $(c, r)$ have been evaluated before. If so, it returns the cached result immediately, pruning the recursive tree. This changes the complexity from exponential $O(2^r)$ to quadratic $O(r^2)$.
+
+\subsection{Infinite Triangles in Haskell}
+
+Haskell's GHC compiler can easily compile tree recursion. However, Haskell allows us to approach the problem from another functional perspective: constructing the entire triangle as a lazy infinite list of lists.
+
+\lstinputlisting[language=Haskell, caption={Tree Recursion and Lazy Infinite Pascal's Triangle in Haskell}, label={lst:pascal_hs}]{../code/haskel/chapter6/pascal.hs}
+
+In Listing \ref{lst:pascal_hs}, \texttt{pascalTriangle} uses the higher-order function \texttt{iterate}. It starts with the first row \texttt{[1]} and continuously generates the next row using:
+\[
+\text{nextRow}(row) = \text{zipWith}(+) \, (0 : row) \, (row \mathbin{++} [0])
+\]
+
+For example, starting with \texttt{[1, 2, 1]}:
+\begin{align*}
+0 : row &= [0, 1, 2, 1] \\
+row \mathbin{++} [0] &= [1, 2, 1, 0] \\
+\text{zipWith}(+) \text{ outputs} &\rightarrow [1, 3, 3, 1]
+\end{align*}
+
+Because Haskell is lazy, this infinite triangle costs nothing in memory until we explicitly extract elements using a function like \texttt{take}. This shows how functional programming lets us represent mathematical systems as complete, infinite structures rather than simple step-by-step loops.
