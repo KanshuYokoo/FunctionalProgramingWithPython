@@ -29,18 +29,29 @@
    - Practical view: A Functor is any container/context (like a List) that can be mapped over using a First-Class function.
    - By passing a function into `map`, you are lifting a simple data transformation into a higher mathematical dimension.
 
+6. **Case Study: Purely Functional Sets as Characteristic Functions**
+   - Represents sets as membership predicates `Int -> Bool` ($\chi_S$).
+   - Category Theory connection: Subobject Classifier $\Omega$ in **Set**, isomorphism $\mathcal{P}(A) \cong \Omega^A$.
+   - Infinite sets at zero memory cost (e.g. `evenSet`).
+   - Set operations as boolean closure combinators (`singletonSet`, `union`, `intersect`, `diff`, `filter`).
+   - Bounded search via linear tail-recursion (`forall`) and De Morgan's derivation (`exists`).
+   - Non-invertible function transformation via existential search (`map`).
+
 ## Resources Created
-- **Text:** `Contents/text/chapter4_firstclass/chapter4_main.tex`
+- **Text:**
+  - `Contents/text/chapter4_firstclass/chapter4_main.tex`
+  - `Contents/text/chapter4_firstclass/section6_functional_sets.tex`
 - **Python:**
   - `Contents/code/python/chapter4/apply_twice.py`
   - `Contents/code/python/chapter4/summation.py`
   - `Contents/code/python/chapter4/derivative.py`
   - `Contents/code/python/chapter4/compose.py`
   - `Contents/code/python/chapter4/map_filter_reduce.py`
+  - `Contents/code/python/chapter4/func_set.py`
 - **Haskell:**
   - `Contents/code/haskel/chapter4/apply_twice.hs`
   - `Contents/code/haskel/chapter4/summation.hs`
   - `Contents/code/haskel/chapter4/derivative.hs`
   - `Contents/code/haskel/chapter4/compose.hs`
   - `Contents/code/haskel/chapter4/map_filter_reduce.hs`
-
+  - `Contents/code/haskel/chapter4/FuncSet.hs`
